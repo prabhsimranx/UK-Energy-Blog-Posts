@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fuse Energy — Blog Agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#FAFAF8;color:#2C2C2A;min-height:100vh;padding:2rem 1rem}
+.shell{max-width:820px;margin:0 auto}
+.hdr{text-align:center;margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:1px solid #E8E6DF}
+.hdr-badge{display:inline-block;font-size:10px;font-weight:500;padding:4px 12px;border-radius:20px;background:#FEF0EA;color:#C43E12;border:1px solid #F4B49A;margin-bottom:1rem;letter-spacing:.04em;text-transform:uppercase}
+.hdr h1{font-family:'Playfair Display',serif;font-size:28px;font-weight:400;color:#2C2C2A;letter-spacing:-.02em;margin-bottom:.5rem}
+.hdr p{font-size:13px;color:#888780;line-height:1.6}
+.panel{background:#FFF;border:1px solid #E8E6DF;border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:16px}
+.panel-title{font-size:11px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.875rem}
+.btn-row{display:flex;gap:10px;align-items:center;margin-bottom:20px;flex-wrap:wrap}
+.btn-primary{background:#E84B1A;color:#fff;border:none;border-radius:10px;padding:12px 32px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:background .15s}
+.btn-primary:hover{background:#cc3e13}
+.btn-primary:disabled{background:#D3D1C7;cursor:not-allowed}
+.btn-secondary{background:#FFF;color:#2C2C2A;border:1px solid #E8E6DF;border-radius:10px;padding:10px 20px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:background .15s,border-color .15s}
+.btn-secondary:hover{background:#F5F3EC;border-color:#D3D1C7}
+.status-msg{font-size:12px;color:#888780}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.metric{background:#FFF;border:1px solid #E8E6DF;border-radius:10px;padding:.75rem 1rem;text-align:center}
+.metric-val{font-family:'DM Mono',monospace;font-size:24px;font-weight:300;line-height:1;margin-bottom:4px;color:#2C2C2A}
+.metric-val.orange{color:#E84B1A}
+.metric-lbl{font-size:10px;color:#888780;line-height:1.3}
+.results-label{font-size:11px;font-weight:500;color:#888780;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.tcard{background:#FFF;border:1px solid #E8E6DF;border-radius:12px;overflow:hidden;display:flex;margin-bottom:8px;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.tcard:hover{border-color:#D3D1C7;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.tcard-bar{width:4px;flex-shrink:0;background:#E84B1A}
+.tcard-body{flex:1;padding:.875rem 1rem}
+.tcard-title{font-size:14px;font-weight:500;color:#2C2C2A;margin-bottom:4px}
+.tcard-sub{font-size:12px;color:#73726C;line-height:1.6;margin-bottom:8px}
+.bcard{background:#FFF;border:1px solid #E8E6DF;border-radius:12px;overflow:hidden;margin-bottom:12px}
+.bcard-head{padding:1.25rem 1.5rem;border-bottom:1px solid #E8E6DF}
+.bcard-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:400;color:#2C2C2A;line-height:1.35;margin-bottom:.375rem}
+.bcard-meta{font-size:12px;color:#888780;font-style:italic;line-height:1.6}
+.bcard-body{padding:1.25rem 1.5rem}
+.bcard-body p{font-size:13px;color:#2C2C2A;line-height:1.8;margin-bottom:.75rem}
+.bcard-body p:last-child{margin-bottom:0}
+.blog-h{font-size:11px;font-weight:500;color:#E84B1A;text-transform:uppercase;letter-spacing:.05em;margin:1.25rem 0 .35rem}
+.pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px}
+.pill-orange{background:#FEF0EA;color:#C43E12;border:1px solid #F4B49A}
+.pill-blue{background:#EFF5FD;color:#2D67B8;border:1px solid #A7C4F4}
+.error-box{background:#FDF0F0;border:1px solid #F4A7A7;border-radius:8px;padding:10px 14px;font-size:13px;color:#C94A30;margin-bottom:14px;display:none}
+.footer{text-align:center;margin-top:2rem;padding-top:1.5rem;border-top:1px solid #E8E6DF;font-size:11px;color:#B4B2A9}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{display:inline-block;width:12px;height:12px;border:2px solid #E8E6DF;border-top-color:#E84B1A;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<div class="hdr">
+  <div class="hdr-badge">Growth Intern Task · AI Content Engine · Demo</div>
+  <h1>Fuse Energy — Blog Agent</h1>
+  <p>Discovers high-intent UK energy topics with SERP gaps.<br>Writes 500-word blog posts in Fuse's voice. Built to scale to 50+ a week.</p>
+</div>
+
+<div class="error-box" id="error-box"></div>
+
+<div id="stage-home">
+  <div class="panel">
+    <div class="panel-title">How it works</div>
+    <p style="font-size:13px;color:#73726C;line-height:1.75">The agent scans the UK energy landscape for high-intent search queries where existing content explains but never helps someone decide. Select a topic and it writes a 500-word blog post in Fuse's voice — declarative, data-grounded, and opinionated.</p>
+  </div>
+  <div class="btn-row">
+    <button class="btn-primary" id="discover-btn" onclick="discoverTopics()">Discover topics →</button>
+    <span class="status-msg" id="home-status"></span>
+  </div>
+</div>
+
+<div id="stage-topics" class="hidden">
+  <div class="metrics" id="topic-metrics"></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <div class="results-label">Select a topic to write</div>
+    <button class="btn-secondary" style="padding:6px 14px;font-size:12px" onclick="discoverTopics()">Refresh →</button>
+  </div>
+  <div id="topic-cards"></div>
+</div>
+
+<div id="stage-generating" class="hidden">
+  <div class="panel" style="text-align:center;padding:2.5rem">
+    <p style="font-size:13px;color:#888780;margin-bottom:6px"><span class="spinner"></span><span id="gen-msg">Writing...</span></p>
+    <p id="gen-topic" style="font-size:12px;color:#B4B2A9;font-style:italic"></p>
+  </div>
+</div>
+
+<div id="stage-blog" class="hidden">
+  <div class="metrics" id="blog-metrics"></div>
+  <div class="results-label">Generated blog post</div>
+  <div id="blog-card"></div>
+  <div class="btn-row" style="margin-top:4px">
+    <button class="btn-primary" onclick="regenerate()">Regenerate →</button>
+    <button class="btn-secondary" onclick="showTopics()">Pick another topic</button>
+  </div>
+</div>
+
+<div class="footer">Fuse Energy · Blog Agent · Powered by Claude API (Anthropic)</div>
+</div>
+
+<script>
+var TOPIC_SYSTEM=`You are an SEO content strategist for Fuse Energy, a UK energy company that helps households get reliable, affordable energy. Your job is to identify high-intent UK energy topics where existing SERP content explains but never actually helps someone decide.
+
+Return ONLY a JSON array of 6 objects with these fields:
+- title: the blog post title (question format, decision-oriented)
+- intent: the real decision the reader is trying to make (1 sentence)
+- gap: why top-ranking content fails them (1 sentence)
+- hook: a punchy 1-2 sentence opening that takes a stance
+
+No markdown, no preamble. Raw JSON only.`;
+
+var BLOG_SYSTEM=`You write SEO blog content for Fuse Energy, a UK energy company. Their voice is declarative, data-driven, and takes a clear stance. They name trade-offs the industry avoids.
+
+PROCESS:
+- Lead with the decision, not a definition
+- Use real UK energy context (Ofgem price cap, wholesale prices, supplier names)
+- Take a clear position in the conclusion
+- Short paragraphs, 2-3 sentences max before a line break
+
+VOICE RULES:
+- Confident and direct. Never hedge.
+- Data earns its place, use it to prove a point, not decorate
+- Name the real problem the industry creates
+- End with a recommendation, not a summary
+
+STRICT AVOID LIST:
+- Em dashes (use commas or full stops instead)
+- Hedging phrases like "it is worth noting"
+- Passive constructions
+- Fence-sitting conclusions
+
+FORMAT: return plain text with this exact structure:
+META: [1-2 sentence meta description]
+
+[Opening hook, 2-3 sentences, no subheading, takes a stance immediately]
+
+**[Subheading]**
+[Section content]
+
+**[Subheading]**
+[Section content]
+
+**[Subheading]**
+[Section content]
+
+**[Subheading]**
+[Section content, the decision/recommendation]
+
+Target exactly 500 words. Be ruthless with cutting.`;
+
+var topics=[];
+var selected=null;
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+function showError(msg){
+  var el=document.getElementById('error-box');
+  if(msg){el.textContent=msg;el.style.display='block';}
+  else{el.style.display='none';}
+}
+
+function showStage(name){
+  ['home','topics','generating','blog'].forEach(function(s){
+    document.getElementById('stage-'+s).classList.add('hidden');
+  });
+  document.getElementById('stage-'+name).classList.remove('hidden');
+}
+
+async function callAgent(system, user){
+  var res=await fetch('/api/generate',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({system:system,user:user})
+  });
+  var data=await res.json();
+  if(data.error)throw new Error(data.error.message||data.error);
+  return data.content&&data.content[0]&&data.content[0].text||'';
+}
+
+async function discoverTopics(){
+  showError('');
+  document.getElementById('home-status').innerHTML='<span class="spinner"></span>Scanning the UK energy landscape...';
+  document.getElementById('discover-btn').disabled=true;
+  showStage('home');
+  try{
+    var raw=await callAgent(TOPIC_SYSTEM,'Suggest 6 high-intent UK energy blog topics for Fuse Energy. Focus on decisions real households face right now in 2026: tariff choices, smart meters, heat pumps, solar, energy debt, standing charges, switching suppliers. Return raw JSON only.');
+    var clean=raw.replace(/```json|```/g,'').trim();
+    topics=JSON.parse(clean);
+    renderTopics();
+    showStage('topics');
+  }catch(e){
+    showError('Could not load topics. Please try again. ('+e.message+')');
+    showStage('home');
+  }
+  document.getElementById('home-status').textContent='';
+  document.getElementById('discover-btn').disabled=false;
+}
+
+function renderTopics(){
+  document.getElementById('topic-metrics').innerHTML=
+    '<div class="metric"><div class="metric-val orange">'+topics.length+'</div><div class="metric-lbl">Topics found</div></div>'+
+    '<div class="metric"><div class="metric-val orange">All</div><div class="metric-lbl">Decision-based intent</div></div>'+
+    '<div class="metric"><div class="metric-val orange">All</div><div class="metric-lbl">SERP gap identified</div></div>';
+
+  document.getElementById('topic-cards').innerHTML=topics.map(function(t,i){
+    return '<div class="tcard" onclick="generateBlog('+i+')">'+
+      '<div class="tcard-bar"></div>'+
+      '<div class="tcard-body">'+
+        '<p class="tcard-title">'+esc(t.title)+'</p>'+
+        '<p class="tcard-sub">'+esc(t.gap)+'</p>'+
+        '<span class="pill pill-orange">High intent</span> '+
+        '<span class="pill pill-blue">SERP gap</span>'+
+      '</div></div>';
+  }).join('');
+}
+
+async function generateBlog(i){
+  selected=topics[i];
+  showError('');
+  document.getElementById('gen-msg').textContent='Writing the blog post...';
+  document.getElementById('gen-topic').textContent=selected.title;
+  showStage('generating');
+  try{
+    var result=await callAgent(BLOG_SYSTEM,
+      'Write a blog post for Fuse Energy on this topic:\n\nTitle: '+selected.title+
+      '\nReader intent: '+selected.intent+
+      '\nSERP gap to exploit: '+selected.gap+
+      '\nSuggested hook: '+selected.hook+
+      '\n\nFollow the format exactly. Plain text, no JSON wrapper.');
+    renderBlog(result);
+    showStage('blog');
+  }catch(e){
+    showError('Could not generate blog. Please try again.');
+    showStage('topics');
+  }
+}
+
+function renderBlog(raw){
+  var lines=raw.split('\n');
+  var meta='';
+  var body=[];
+  lines.forEach(function(l){
+    if(l.startsWith('META:'))meta=l.replace('META:','').trim();
+    else body.push(l);
+  });
+  var wordCount=raw.replace(/\*\*/g,'').replace(/META:[^\n]*/,'').trim().split(/\s+/).length;
+  var bodyHtml=body.join('\n').trim().split('\n').map(function(line){
+    if(!line.trim())return '<div style="height:.5rem"></div>';
+    if(line.startsWith('**')&&line.endsWith('**'))return '<p class="blog-h">'+esc(line.replace(/\*\*/g,''))+'</p>';
+    return '<p>'+esc(line)+'</p>';
+  }).join('');
+
+  document.getElementById('blog-metrics').innerHTML=
+    '<div class="metric"><div class="metric-val orange">~'+wordCount+'</div><div class="metric-lbl">Words</div></div>'+
+    '<div class="metric"><div class="metric-val orange">500</div><div class="metric-lbl">Target</div></div>'+
+    '<div class="metric"><div class="metric-val orange">1</div><div class="metric-lbl">Posts ready</div></div>';
+
+  document.getElementById('blog-card').innerHTML=
+    '<div class="bcard">'+
+      '<div class="bcard-head">'+
+        '<p class="bcard-title">'+esc(selected.title)+'</p>'+
+        '<p class="bcard-meta">'+esc(meta)+'</p>'+
+      '</div>'+
+      '<div class="bcard-body">'+bodyHtml+'</div>'+
+    '</div>';
+}
+
+function regenerate(){if(selected)generateBlog(topics.indexOf(selected));}
+function showTopics(){showError('');showStage('topics');}
+</script>
+</body>
+</html>
